@@ -1,0 +1,67 @@
+﻿<Window x:Class="EstimationOfAuthorities.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Estymacja autorytetów" Height="410" Width="800"
+        Closing="DataWindow_Closing">
+    <StackPanel>
+        <StackPanel Margin="0,5" Orientation="Horizontal">
+            <RadioButton Name="RBEnableEmployeesPanel" Margin="10,0" Content="Widok pracownika"/>
+            <RadioButton Name="RBEnableCEOPanel" Margin="130,0" Content="Widok CEO"/>
+        </StackPanel>
+        <Separator Margin="5,0"/>
+        <Grid Name="MainGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Name="CEOChooser" Orientation="Horizontal" Grid.Column="1">
+                <Label Content="Widok CEO&#xA;" HorizontalAlignment="Left" Margin="95,7,0,0" VerticalAlignment="Top" Width="71"/>
+            </StackPanel>
+            <StackPanel Name="EmployeeChooser" Orientation="Horizontal">
+                <Label Content="Widok Pracownika" HorizontalAlignment="Left" Margin="0,7,0,0" VerticalAlignment="Top" Width="120"/>
+                <ComboBox Name="CBEmployees" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Width="129" SelectionChanged="SelectedEmployeeView"/>
+            </StackPanel>
+            <StackPanel Name="EmployeePanel" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="259" Grid.ColumnSpan="3">
+                <Separator Margin="5,0"/>
+                <Label Content="Wybierz współpracownika"/>
+                <ListBox Name="ListOfEmployees1" HorizontalAlignment="Left" Height="93" Margin="10,0,0,0" VerticalAlignment="Top" Width="238"/>
+                <GroupBox Header="Szczegółowe dane" HorizontalAlignment="Left" VerticalAlignment="Top">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Wartość dla firmy" Width="191"/>
+                            <TextBox Name="ValueForCompany" Width="50"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Przepracowny czas" Width="191"/>
+                            <TextBox Name="TimeWorked" Width="50"/>
+                        </StackPanel>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+            <StackPanel Name="CEOPanelAddEmployee" Grid.Column="1" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="259">
+                <Separator Margin="5,0"/>
+                <Label Content="Dodaj pracownika"/>
+                <TextBox Name="EmployeeName" Height="23" TextWrapping="Wrap" TextChanged="EmployeeNameChanged"/>
+                <Label Content="Data zatrudnienia"/>
+                <Calendar Name="Calendar"/>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Rola"/>
+                    <ComboBox Name="CBRoles" HorizontalAlignment="Left" Margin="60,3,0,0" VerticalAlignment="Top" Width="140" SelectionChanged="SelectedEmployeeView"/>
+                </StackPanel>
+                <Button Name="AddEditButton" Content="DODAJ PRACOWNIKA" Margin="5" Click="AddEditEmployee"/>
+            </StackPanel>
+            <StackPanel Name="CEOPanel" Grid.Column="2" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="259">
+                <Label Content="Wybierz pracownika"/>
+                <ListBox Name="ListOfEmployees2" HorizontalAlignment="Left" Height="93" Margin="10,0,0,0" VerticalAlignment="Top" Width="238"/>
+                <GroupBox Header="Szczegółowe dane" HorizontalAlignment="Left" VerticalAlignment="Top">
+
+                </GroupBox>
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</Window>
