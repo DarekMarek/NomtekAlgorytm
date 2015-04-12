@@ -99,6 +99,27 @@ namespace EstimationOfAuthorities
             MessageBox.Show("Dane zostały zapisane.");
             SerializeToXML();
         }
+        private void Show_EmployeesDetails(object sender, RoutedEventArgs e)
+        {
+            string name = (string)ListOfEmployees2.SelectedValue;
+            Employee employee = null;
+            foreach(var em in nomtek.Employees)
+                if (em.Name == name)
+                    employee = em;
+            
+            if(employee!=null)
+            {
+                DetailsLabel.Visibility = Visibility.Visible;
+                EmployeesDetails.Visibility = Visibility.Visible;
+
+                string role =String.Empty;
+                foreach(var r in employee.Roles)
+                    role+=(r.Name+"\n");
+
+                string text = "Nazwa: " + employee.Name + "\nData zatrudnienia " + employee.EmploymentDate + "\nRole: "+role;
+                EmployeesDetails.Text = text;
+            }
+        }
         #endregion
 
         #region Methods
@@ -162,6 +183,8 @@ namespace EstimationOfAuthorities
             }
         }
         #endregion
+
+      
         
     }
 }

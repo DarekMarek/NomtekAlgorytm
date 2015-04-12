@@ -24,7 +24,7 @@
             </StackPanel>
             <StackPanel Name="EmployeeChooser" Orientation="Horizontal">
                 <Label Content="Widok Pracownika" HorizontalAlignment="Left" Margin="0,7,0,0" VerticalAlignment="Top" Width="120"/>
-                <ComboBox Name="CBEmployees" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Width="129" SelectionChanged="SelectedEmployeeView"/>
+                <ComboBox Name="CBEmployees" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Width="129"/>
             </StackPanel>
             <StackPanel Name="EmployeePanel" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="259" Grid.ColumnSpan="3">
                 <Separator Margin="5,0"/>
@@ -48,19 +48,20 @@
                 <Label Content="Dodaj pracownika"/>
                 <TextBox Name="EmployeeName" Height="23" TextWrapping="Wrap" TextChanged="EmployeeNameChanged"/>
                 <Label Content="Data zatrudnienia"/>
-                <Calendar Name="Calendar"/>
+                <Calendar Name="Calendar" SelectionMode="SingleDate"/>
                 <StackPanel Orientation="Horizontal">
                     <Label Content="Rola"/>
-                    <ComboBox Name="CBRoles" HorizontalAlignment="Left" Margin="60,3,0,0" VerticalAlignment="Top" Width="140" SelectionChanged="SelectedEmployeeView"/>
+                    <ComboBox Name="CBRoles" HorizontalAlignment="Left" Margin="60,3,0,0" VerticalAlignment="Top" Width="140" />
                 </StackPanel>
                 <Button Name="AddEditButton" Content="DODAJ PRACOWNIKA" Margin="5" Click="AddEditEmployee"/>
             </StackPanel>
             <StackPanel Name="CEOPanel" Grid.Column="2" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="259">
-                <Label Content="Wybierz pracownika"/>
-                <ListBox Name="ListOfEmployees2" HorizontalAlignment="Left" Height="93" Margin="10,0,0,0" VerticalAlignment="Top" Width="238"/>
-                <GroupBox Header="Szczegółowe dane" HorizontalAlignment="Left" VerticalAlignment="Top">
-
-                </GroupBox>
+                <Label Content="Wybierz pracownika" FontWeight="Bold" FontSize="14"/>
+                <Button  Click="Show_EmployeesDetails" Height="27" RenderTransformOrigin="1.026,-1.195" Content="Wyświetl szczegóły" Margin="125,0,11,0"/>
+                <ListBox x:Name="ListOfEmployees2" HorizontalAlignment="Left" Height="93" VerticalAlignment="Top" Width="248"/>
+                <Label x:Name="DetailsLabel" Content="Szczegóły pracownika" Visibility="Visible" FontWeight="Bold" FontSize="14"/>
+                <Separator Margin="0" Height="19"/>
+                <TextBlock x:Name="EmployeesDetails" HorizontalAlignment="Left" Height="45" VerticalAlignment="Top" Width="248" Visibility="Hidden"/>
             </StackPanel>
         </Grid>
     </StackPanel>
