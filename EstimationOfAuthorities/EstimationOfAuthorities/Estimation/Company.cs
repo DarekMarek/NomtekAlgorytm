@@ -11,6 +11,7 @@ namespace EstimationOfAuthorities.Estimation
     /// </summary>
     class Company
     {
+        #region Properties
         /// <summary>
         /// Nazwa firmy
         /// </summary>
@@ -27,6 +28,28 @@ namespace EstimationOfAuthorities.Estimation
         public List<Role> Roles { get; set; }
 
         /// <summary>
+        /// Zapamiętane ewaluacje
+        /// </summary>
+        public List<Graph> Evaluations { get; set; }
+
+        /// <summary>
+        /// Aktualna ewaluacja
+        /// </summary>
+        public Graph CurrentEvaluation { get; set; }
+
+        /// <summary>
+        /// Liczba wszystkich ewaluacji
+        /// </summary>
+        public int EvaluationsAmount { get; set; }
+
+        /// <summary>
+        /// Czy obecna ewaluacje jest w trakcie
+        /// </summary>
+        public bool IsEvaluationInProgress { get; set; }
+        #endregion
+
+        #region Constructors
+        /// <summary>
         /// Główny konstruktor
         /// </summary>
         /// <param name="name">Nazwa firmy</param>
@@ -34,7 +57,12 @@ namespace EstimationOfAuthorities.Estimation
             Name = name;
             Employees = new List<Employee>();
             Roles = new List<Role>();
+            EvaluationsAmount = 0;
+            CurrentEvaluation = null;
+            IsEvaluationInProgress = false;
+            Evaluations = new List<Graph>();
         }
+        #endregion
 
         /// <summary>
         /// Dodanie roli jaką pracownicy mogą przyjąć
@@ -44,6 +72,7 @@ namespace EstimationOfAuthorities.Estimation
             if (!Roles.Exists(role => role.Name.Equals(r.Name))) Roles.Add(r);
         }
 
+        #region Methods
         /// <summary>
         /// Dodanie nowego pracownika do firmy
         /// </summary>
@@ -52,11 +81,26 @@ namespace EstimationOfAuthorities.Estimation
             if (!Employees.Exists(e => e.Name.Equals(em.Name))) Employees.Add(em);
             else {
                 Employee emp = Employees.Find(e => e.Name.Equals(em.Name));
-                emp.EmploymentDate = emp.EmploymentDate;
+                emp.EmploymentDate = em.EmploymentDate;
                 foreach (Role r in em.Roles) {
                     emp.AddRole(r);
                 }
             }
         }
+
+        public void CreateNewEvaluation() {
+            EvaluationsAmount++;
+            CurrentEvaluation = new Graph(this);
+            Evaluations.Add(CurrentEvaluation);
+            IsEvaluationInProgress = true;
+        }
+
+        public void CloseEvaluation(string evalName) {
+            Graph eval = Evaluations.Find(e => e.Name == evalName);
+            eval.IsFinished = true;
+            eval.EstimateAuthorities();
+            IsEvaluationInProgress = false;
+        }
+        #endregion
     }
 }

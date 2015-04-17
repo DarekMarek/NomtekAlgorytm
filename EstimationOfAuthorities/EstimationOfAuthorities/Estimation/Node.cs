@@ -11,6 +11,42 @@ namespace EstimationOfAuthorities.Estimation
     /// </summary>
     class Node
     {
+        #region Properties
+        /// <summary>
+        /// Pracownik firmy
+        /// </summary>
+        public Employee Employee { get; set; }
 
+        /// <summary>
+        /// Wyestymowany autorytet
+        /// </summary>
+        public double EstimatedAutority { get; set; }
+
+        /// <summary>
+        /// Lista sąsiedztwa (lista pracowników, którzy ocenili danego pracownika (whis.Employee) - jak pracownik (this.Employee) został oceniony przez innych pracowników)
+        /// </summary>
+        public List<Neighbour> Neighbours { get; set; }
+        #endregion
+
+        #region Constructors
+        public Node(Employee emp) {
+            Employee = emp;
+            Neighbours = new List<Neighbour>();
+        }
+
+        #endregion
+
+        #region Methods
+        public void AddNeighbour(Neighbour n) {
+            if (Neighbours.Exists(ne => ne.ContainsEmployee(n.FromNode))) {
+                Neighbour current = Neighbours.Find(ne => ne.ContainsEmployee(n.FromNode));
+                current.ValueForCompany = n.ValueForCompany;
+                current.WorkedHours = n.WorkedHours;
+                //Console.WriteLine("TO: " + n.ToNode.Employee.Name);
+            } else
+                Neighbours.Add(n);
+        }
+
+        #endregion
     }
 }

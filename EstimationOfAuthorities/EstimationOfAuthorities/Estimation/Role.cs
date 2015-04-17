@@ -12,6 +12,7 @@ namespace EstimationOfAuthorities.Estimation
 
     public class Role
     {
+        #region Properties
         /// <summary>
         /// Nazwa roli
         /// </summary>
@@ -21,11 +22,14 @@ namespace EstimationOfAuthorities.Estimation
         /// Priorytet roli
         /// </summary>
         public int Priority { get; set; }
+        #endregion
 
+        #region Constructors
         public Role(string name, int prior) {
             Name = name;
             Priority = prior;
         }
         public Role() { }
+        #endregion
     }
 }

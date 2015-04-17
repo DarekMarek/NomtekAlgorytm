@@ -25,6 +25,9 @@ namespace EstimationOfAuthorities
     public partial class MainWindow : Window
     {
         Company nomtek;
+        bool evaluationInProgress = false;
+        bool allowChangeSelectedValue = true, allowChangeText = true;
+        CheckBox[] CBRoles;
 
         #region Constructors
         public MainWindow() {
@@ -45,11 +48,24 @@ namespace EstimationOfAuthorities
             RBEnableEmployeesPanel.Checked += EnableEmployeesPanel;
             RBEnableCEOPanel.Checked += EnableCEOPanel;
             RBEnableCEOPanel.IsChecked = true;
+
+            CBRoles = new CheckBox[nomtek.Roles.Count];
+            int i = 0;
+            StackPanel sp = new StackPanel();
+            foreach (Role r in nomtek.Roles) {
+                //CBRoles.Items.Add(r.Name);
+                CheckBox cb = new CheckBox();
+                //cb.Name = "Role" + i;
+                cb.Content = r.Name;
+                CBRoles[i++] = cb;
+                sp.Children.Add(cb);
+            }
+            Roles.Content = sp;
+
+            EmployeeName.TextChanged += EmployeeNameChanged;
             EmployeeName.Text = "Imię Nazwisko";
 
-            foreach (Role r in nomtek.Roles) {
-                CBRoles.Items.Add(r.Name);
-            }
+            allowChangeSelectedValue = true;
         }
         #endregion
 
@@ -57,11 +73,14 @@ namespace EstimationOfAuthorities
         private void EnableEmployeesPanel(object sender, RoutedEventArgs e) {
             //EmployeeColumn
             //ListOfEmployees1.IsEnabled = true;
-            EmployeeChooser.IsEnabled = true;
-            EmployeePanel.IsEnabled = true;
+            if (nomtek.IsEvaluationInProgress) {
+                EmployeeChooser.IsEnabled = true;
+                EmployeePanel.IsEnabled = true;
+            }
             CEOChooser.IsEnabled = false;
             CEOPanel.IsEnabled = false;
             CEOPanelAddEmployee.IsEnabled = false;
+            NewEvaluation.IsEnabled = false;
         }
         private void EnableCEOPanel(object sender, RoutedEventArgs e) {
 
@@ -70,6 +89,7 @@ namespace EstimationOfAuthorities
             CEOChooser.IsEnabled = true;
             CEOPanel.IsEnabled = true;
             CEOPanelAddEmployee.IsEnabled = true;
+            NewEvaluation.IsEnabled = true;
             //ListOfEmployees1.IsEnabled = false;
         }
         /// <summary>
@@ -81,25 +101,34 @@ namespace EstimationOfAuthorities
 
         }
         private void AddEditEmployee(object sender, RoutedEventArgs e) {
-            if (!EmployeeName.Text.Equals("") && Calendar.SelectedDate != null && CBRoles.SelectedIndex != -1) {
-                Employee newEmp = new Employee(EmployeeName.Text, (DateTime)Calendar.SelectedDate);
-                newEmp.AddRole(nomtek.Roles[CBRoles.SelectedIndex]);
+            if (!EmployeeName.Text.Equals("") && CalendarE.SelectedDate != null) {// && CBRoles.SelectedIndex != -1) {
+                Employee newEmp = new Employee(EmployeeName.Text, (DateTime)CalendarE.SelectedDate);
+                //newEmp.AddRole(nomtek.Roles[CBRoles.SelectedIndex]);
+                for (int i = 0; i < CBRoles.Length; i++) {
+                    if (CBRoles[i].IsChecked.Value) {
+                        newEmp.AddRole(nomtek.Roles[i]);
+                    }
+                }
                 nomtek.AddEditEmployee(newEmp);
-                RefreshButton();
+                RefreshControls();
                 RefreshLists();
+                ListOfEmployees2.SelectedValue = newEmp.Name;
+                Show_EmployeesDetails();
             }
             else MessageBox.Show("Nie przekazano wszystkich danych");
 
         }
         private void EmployeeNameChanged(object sender, TextChangedEventArgs e) {
-            RefreshButton();
+            //if (allowChangeText) {
+                RefreshControls();
+            //} else allowChangeText = true;
         }
         private void DataWindow_Closing(object sender, EventArgs e)
         {
             MessageBox.Show("Dane zostały zapisane.");
             SerializeToXML();
         }
-        private void Show_EmployeesDetails(object sender, RoutedEventArgs e)
+        private void Show_EmployeesDetails()
         {
             string name = (string)ListOfEmployees2.SelectedValue;
             Employee employee = null;
@@ -112,20 +141,73 @@ namespace EstimationOfAuthorities
                 DetailsLabel.Visibility = Visibility.Visible;
                 EmployeesDetails.Visibility = Visibility.Visible;
 
-                string role =String.Empty;
+                string role = String.Empty;
                 foreach(var r in employee.Roles)
                     role+=(r.Name+"\n");
 
-                string text = "Nazwa: " + employee.Name + "\nData zatrudnienia " + employee.EmploymentDate + "\nRole: "+role;
+                string autorithy = "";
+                if (nomtek.IsEvaluationInProgress) {
+                    autorithy = "\nAutorytet: " + nomtek.CurrentEvaluation.Nodes.Find(node => node.Employee == employee);
+                }
+                string text = "Nazwa: " + employee.Name + "\nData zatrudnienia " + employee.EmploymentDate + "\nRole: "+role + autorithy;
                 EmployeesDetails.Text = text;
             }
+        }
+
+        private void NewEvaluation_Click(object sender, RoutedEventArgs e) {
+            if (!evaluationInProgress) {
+                nomtek.CreateNewEvaluation();
+                NewEvaluation.Content = "       Zakończ ewaluację       ";
+            } else {
+                nomtek.CloseEvaluation(nomtek.CurrentEvaluation.Name);
+                NewEvaluation.Content = "Rozpocznij nową ewaluację";
+            }
+            evaluationInProgress = !evaluationInProgress;
+        }
+
+        private void EmployeeSelected(object sender, SelectionChangedEventArgs e) {
+            if (allowChangeSelectedValue) {
+                if (((ListBox)sender).SelectedValue != null) {
+                    EmployeeName.Text = ((ListBox)sender).SelectedValue.ToString();
+                    //Show_EmployeesDetails();
+                } else {
+                    EmployeesDetails.Text = "";
+                }
+                //allowChangeText = false;
+            } else allowChangeSelectedValue = true;
         }
         #endregion
 
         #region Methods
-        private void RefreshButton() {
-            if (nomtek.Employees.Exists(em => em.Name.Equals(EmployeeName.Text))) AddEditButton.Content = "EDYTUJ PRACOWNIKA";
-            else AddEditButton.Content = "DODAJ PRACOWNIKA";
+        /// <summary>
+        /// Odświeżenie kontrolek po wybraniu/wpisaniu nazwy pracownika
+        /// </summary>
+        private void RefreshControls() {
+            var CBRolesList = CBRoles.ToList<CheckBox>();
+            CBRolesList.RemoveAll(cb => cb == null);
+            //CBRolesList.ForEach(Console.WriteLine);
+            allowChangeSelectedValue = false;
+            if (nomtek.Employees.Exists(em => em.Name.Equals(EmployeeName.Text))) {
+                var currEmp = nomtek.Employees.Find(em => em.Name.Equals(EmployeeName.Text));
+                CalendarE.SelectedDate = currEmp.EmploymentDate;
+                AddEditButton.Content = "EDYTUJ PRACOWNIKA";
+                CBRolesList.ForEach(cb => cb.IsChecked = false);
+                foreach (Role role in currEmp.Roles) {
+                    CBRolesList.Find(cb => cb.Content.ToString().Equals(role.Name)).IsChecked = true;
+                }
+                //allowChangeSelectedValue = false;
+                ListOfEmployees2.SelectedValue = currEmp.Name;
+                Show_EmployeesDetails();
+                //CBRolesList.ForEach(cb => Console.WriteLine(cb.Content));
+            } else {
+                AddEditButton.Content = "DODAJ PRACOWNIKA";
+                CBRolesList.ForEach(cb => cb.IsChecked = false);
+                CalendarE.SelectedDate = null;
+                //allowChangeSelectedValue = false;
+                ListOfEmployees2.SelectedValue = null;
+                EmployeesDetails.Text = "";
+            }
+            allowChangeSelectedValue = true;
         }
         /// <summary>
         /// Odświeżenie list pracowników
@@ -183,6 +265,23 @@ namespace EstimationOfAuthorities
             }
         }
         #endregion
+
+        private void NewNeighbour(object sender, RoutedEventArgs e) {
+            double value = 0;
+            double time = 0;
+            if (CBEmployees.SelectedIndex != -1 && ListOfEmployees1.SelectedIndex != -1 &&
+                Double.TryParse(ValueForCompany.Text, out value) && Double.TryParse(TimeWorked.Text, out time)) {
+                Node employee = nomtek.CurrentEvaluation.Nodes.Find(n => n.Employee.Name == CBEmployees.SelectedValue.ToString());
+                Node next = nomtek.CurrentEvaluation.Nodes.Find(n => n.Employee.Name == ListOfEmployees1.SelectedValue.ToString());
+                if (employee != next) {
+                    Neighbour n = new Neighbour(employee, next, value, time);
+                    employee.AddNeighbour(n);
+                    next.AddNeighbour(n);
+                    MessageBox.Show("Oceniono pracownika");
+                }
+            }
+        }
+
 
       
         

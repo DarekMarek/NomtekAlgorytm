@@ -36,3 +36,16 @@ C:\Users\Rafa\Desktop\NomtekGraf\EstimationOfAuthorities\EstimationOfAuthorities
 C:\Users\Rafa\Desktop\NomtekGraf\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\EstimationOfAuthorities.g.resources
 C:\Users\Rafa\Desktop\NomtekGraf\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\EstimationOfAuthorities.Properties.Resources.resources
 C:\Users\Rafa\Desktop\NomtekGraf\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\EstimationOfAuthorities.csproj.GenerateResource.Cache
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\bin\Debug\EstimationOfAuthorities.exe.config
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\EstimationOfAuthorities.exe
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\EstimationOfAuthorities.pdb
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\bin\Debug\EstimationOfAuthorities.exe
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\bin\Debug\EstimationOfAuthorities.pdb
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\EstimationOfAuthorities.csprojResolveAssemblyReference.cache
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\MainWindow.baml
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\MainWindow.g.cs
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\App.g.cs
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\EstimationOfAuthorities_MarkupCompile.cache
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\EstimationOfAuthorities.g.resources
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\EstimationOfAuthorities.Properties.Resources.resources
+D:\Projekty\C#\VI-Semestr-ZPI\NomtekAlgorytm\EstimationOfAuthorities\EstimationOfAuthorities\obj\Debug\EstimationOfAuthorities.csproj.GenerateResource.Cache

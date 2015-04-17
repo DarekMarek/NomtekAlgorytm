@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{79414267-9534-4EC4-81E9-C7850DD8BAF5}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>EstimationOfAuthorities</RootNamespace>
     <AssemblyName>EstimationOfAuthorities</AssemblyName>
@@ -32,6 +32,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -62,7 +65,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Estimation\Company.cs" />
-    <Compile Include="Estimation\Edge.cs" />
+    <Compile Include="Estimation\Neighbour.cs" />
     <Compile Include="Estimation\Employee.cs" />
     <Compile Include="Estimation\Graph.cs" />
     <Compile Include="Estimation\Node.cs" />

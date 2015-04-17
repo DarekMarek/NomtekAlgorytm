@@ -37,7 +37,7 @@ namespace EstimationOfAuthorities.Estimation
        #region Constructors
        public Employee(string name, DateTime employDate) {
             Name = name;
-            employDate = EmploymentDate;
+            EmploymentDate = employDate;
             Roles = new List<Role>();
         }
        public Employee(){}
