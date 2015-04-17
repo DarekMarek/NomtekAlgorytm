@@ -32,14 +32,15 @@ namespace EstimationOfAuthorities.Estimation
         public Node(Employee emp) {
             Employee = emp;
             Neighbours = new List<Neighbour>();
+            EstimatedAutority = 0.0;
         }
 
         #endregion
 
         #region Methods
         public void AddNeighbour(Neighbour n) {
-            if (Neighbours.Exists(ne => ne.ContainsEmployee(n.FromNode))) {
-                Neighbour current = Neighbours.Find(ne => ne.ContainsEmployee(n.FromNode));
+            if (Neighbours.Exists(ne => ne.ContainsEmployee(n.FromNode, n.ToNode))) {
+                Neighbour current = Neighbours.Find(ne => ne.ContainsEmployee(n.FromNode, n.ToNode));
                 current.ValueForCompany = n.ValueForCompany;
                 current.WorkedHours = n.WorkedHours;
                 //Console.WriteLine("TO: " + n.ToNode.Employee.Name);

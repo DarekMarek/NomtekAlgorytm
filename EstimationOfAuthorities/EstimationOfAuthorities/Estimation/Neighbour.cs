@@ -31,6 +31,11 @@ namespace EstimationOfAuthorities.Estimation
         /// Przepracowane godziny z pracownikiem
         /// </summary>
         public double WorkedHours { get; set; }
+
+        /// <summary>
+        /// Waga oceny
+        /// </summary>
+        public double EstimationWeight { get; set; }
         #endregion
 
         #region Constructors
@@ -49,8 +54,8 @@ namespace EstimationOfAuthorities.Estimation
         /// </summary>
         /// <param name="n">wierzchołek</param>
         /// <returns></returns>
-        public bool ContainsEmployee(Node n) {
-            return FromNode.Employee.Name == n.Employee.Name;
+        public bool ContainsEmployee(Node from, Node to) {
+            return FromNode.Employee.Name == from.Employee.Name && ToNode.Employee.Name == to.Employee.Name;
         }
 
         #endregion
