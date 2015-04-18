@@ -106,7 +106,8 @@ namespace EstimationOfAuthorities.Estimation
                         Console.WriteLine("     Waga wynikająca z daty zatrudnienia:     {0}", EmploymentDateWeight);
 
                         // ================ WAGA WYNIKAJĄCA Z ROLI PRACOWNIKA ================ //
-                        double RolesWeight = 0.5;
+                        double RolesWeight = EvaluateRolesWeight(neigbour.FromNode.Employee);
+                        Console.WriteLine("     Waga wynikająca z roli użytkownika:      {0}", RolesWeight);
 
                         // == WAGA WYNIKAJĄCA Z CZĘSTOTLIWOŚCI OCENIANIA INNYCH PRACOWNIKÓW == //
                         double EstimationFrequencyWeight = EvaluateEmplymentDateWeight(MaxEstimationCountByOneEmployee, neigbour.FromNode.Employee, SEARCH_IN_X_ESTIMATIONS);
@@ -127,6 +128,10 @@ namespace EstimationOfAuthorities.Estimation
                 // ================ WYLICZENIE AUTORYTETU PRACOWNIKA  ================ //
                 // Wyliczenie autorytetu pracownika n na podstawie ocen współpracowników i wyżej wyliczonych wag dla każdego współpracownika.
                 if (EstimatedByCount != 0) n.EstimatedAutority /= EstimatedByCount;
+
+                // ============== UWZGLĘDNIENIE POPRZEDNICH KILKU OCEN  ============== //
+                // Do wymyślenia
+                n.EstimatedAutority = n.EstimatedAutority;
             }
             // ---------- ALGORYTM ESTYMACJI AUTORYTETÓW ---------- //
 
@@ -164,6 +169,30 @@ namespace EstimationOfAuthorities.Estimation
             //Console.WriteLine(maxExperience.Days);
             //Console.WriteLine(employeeExperience.Days);
             weight = (double)employeeExperience.Days / maxExperience.Days;//) / maxExperience.Days;
+
+            return weight;
+        }
+
+        // ------------------------------------------------------------------------
+
+        /// <summary>
+        /// Wyliczenie wagi wynikającej z posiadanych ról użytkownika
+        /// </summary>
+        /// <param name="emp"></param>
+        /// <returns></returns>
+        private double EvaluateRolesWeight(Employee emp) {
+            double weight = 0.0;
+
+            weight = emp.Roles.Count > 0 ?
+                (double)emp.Roles.Max(role => role.Priority) / 10 + 0.5 :
+                0.4;
+
+            //foreach (Role role in emp.Roles) {
+            //    weight += role.Priority;
+            //}
+            //weight = emp.Roles.Count > 0 ?
+            //    (weight / emp.Roles.Count) + 0.5 :
+            //    0.1;
 
             return weight;
         }
