@@ -26,7 +26,7 @@ namespace EstimationOfAuthorities
     {
         Company nomtek;
         bool evaluationInProgress = false;
-        bool allowChangeSelectedValue = true, allowChangeText = true;
+        bool allowChangeSelectedValue = true;//, allowChangeText = true;
         CheckBox[] CBRoles;
 
         #region Constructors
@@ -66,6 +66,10 @@ namespace EstimationOfAuthorities
             EmployeeName.Text = "Imię Nazwisko";
 
             allowChangeSelectedValue = true;
+
+            // URUCHOMIENIE DANYCH TESTOWYCH
+            nomtek.TestData1();
+
         }
         #endregion
 
@@ -263,6 +267,7 @@ namespace EstimationOfAuthorities
                 }
                 nomtek.Employees = (List<Employee>)oSerializer.Deserialize(reader);
             }
+            nomtek.CEO = nomtek.Employees.Find(e => e.Roles.Exists(r => r.Priority == 6));
         }
         #endregion
 
