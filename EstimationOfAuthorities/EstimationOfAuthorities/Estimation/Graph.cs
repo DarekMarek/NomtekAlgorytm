@@ -1,4 +1,7 @@
-﻿using System;
+﻿#define WEIGHTS
+#undef WEIGHTS
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +14,22 @@ namespace EstimationOfAuthorities.Estimation
     /// </summary>
     class Graph
     {
+        // TO DO
+        // Rafał:
+        // - Wziąć pod uwagę kilka poprzendich ocen    
+    //PK   // - Co jeśli użytkownik nie dostał oceny     //RB na tę chwilę weźmiemy po prostu średnią
+        //
+        // Przemo:
+        // - Wziąć pod uwagę kilka estymacji przy przepracowanych godzinach 
+        // - Dane do testów
+
         private static int SEARCH_IN_X_ESTIMATIONS = 3;
+        private static double A = Double.Parse(Properties.Resources.A);
+        private static double B = Double.Parse(Properties.Resources.B);
+        private static double C = Double.Parse(Properties.Resources.C);
+        private static double D = Double.Parse(Properties.Resources.D);
+        private static double E = Double.Parse(Properties.Resources.E);
+
 
         #region Properties
         /// <summary>
@@ -33,6 +51,11 @@ namespace EstimationOfAuthorities.Estimation
         /// Czy okres ewaluacji dobiegł końca (czy można wciąż oceniać)
         /// </summary>
         public bool IsFinished { get; set; }
+
+        /// <summary>
+        /// Gotówka do podziału
+        /// </summary>
+        public double CashToShare { get; set; }
         #endregion
 
         #region Constructors
@@ -45,12 +68,17 @@ namespace EstimationOfAuthorities.Estimation
             foreach (Employee e in comp.Employees) {
                 Nodes.Add(new Node(e));
             }
+
+            CashToShare = 20000;
         }
 
 
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Wyestymowanie autorytetów w danej estymacji
+        /// </summary>
         public void EstimateAuthorities() {
             Console.WriteLine("===========================================");
             Console.WriteLine("              {0}", Name);
@@ -68,8 +96,6 @@ namespace EstimationOfAuthorities.Estimation
 
 
             // ========== Wyliczenie globalnych wartości do obliczeń - ROLE UŻYTKOWNIKA
-
-            
             // ////////// Wyliczenie globalnych wartości do obliczeń ...
 
 
@@ -81,7 +107,7 @@ namespace EstimationOfAuthorities.Estimation
 
 
             // ========== Wyliczenie globalnych wartości do obliczeń - LICZBA PRZEPRACOWANYCH GODZIN
-            double MaxWorkedHours = FindMaxWorkedHours();
+            double MaxWorkedHours = FindMaxWorkedHours(SEARCH_IN_X_ESTIMATIONS);
             Console.WriteLine("Max Worked Hours:           " + MaxWorkedHours);
 
             // ////////// Wyliczenie globalnych wartości do obliczeń ...
@@ -90,38 +116,47 @@ namespace EstimationOfAuthorities.Estimation
 
             // Aktualny pracownik: n
             foreach (Node n in Nodes) {
+#if WEIGHTS
                 Console.WriteLine();
                 Console.WriteLine(n.Employee.Name);
+#endif
 
                 // Dla każdego pracownika, który ocenił pracownika n, wyliczam wagę/ważność jego oceny na podstawie poniższych czynników
                 int EstimatedByCount = 0;       // Liczba pracowników, którzy ocenili pracownika n
                 foreach (Neighbour neigbour in n.Neighbours) {
                     if (n == neigbour.ToNode) {
+                        var EstimatedBy = neigbour.FromNode;
                         EstimatedByCount++;
                         // ================ WYLICZENIE AUTORYTETU PRACOWNIKA  ================ //
-                        TimeSpan experience = Now - neigbour.FromNode.Employee.EmploymentDate;
+                        TimeSpan experience = Now - EstimatedBy.Employee.EmploymentDate;
 
                         // =============== WAGA WYNIKAJĄCA Z DATY ZATRUDNIENIA =============== //
                         double EmploymentDateWeight = EvaluateEmplymentDateWeight(maxExperience, experience);
-                        Console.WriteLine("     Waga wynikająca z daty zatrudnienia:     {0}", EmploymentDateWeight);
 
                         // ================ WAGA WYNIKAJĄCA Z ROLI PRACOWNIKA ================ //
-                        double RolesWeight = EvaluateRolesWeight(neigbour.FromNode.Employee);
-                        Console.WriteLine("     Waga wynikająca z roli użytkownika:      {0}", RolesWeight);
+                        double RolesWeight = EvaluateRolesWeight(EstimatedBy.Employee);
 
                         // == WAGA WYNIKAJĄCA Z CZĘSTOTLIWOŚCI OCENIANIA INNYCH PRACOWNIKÓW == //
-                        double EstimationFrequencyWeight = EvaluateEmplymentDateWeight(MaxEstimationCountByOneEmployee, neigbour.FromNode.Employee, SEARCH_IN_X_ESTIMATIONS);
-                        Console.WriteLine("     Waga wynikająca z częst. oceniania:      {0}", EstimationFrequencyWeight);
+                        double EstimationFrequencyWeight = EvaluateEmplymentDateWeight(MaxEstimationCountByOneEmployee, EstimatedBy.Employee, SEARCH_IN_X_ESTIMATIONS);
 
                         // = WAGA WYNIKAJĄCA Z LICZBY PRZEPRACOWANYCH GODZIN Z PRACOWNIKIEM  = //
-                        double WorkedHoursWeight = EvaluateWorkedHoursWeight(MaxWorkedHours, neigbour.WorkedHours);
-                        Console.WriteLine("     Waga wynikająca z il. przper. czasu:     {0}", WorkedHoursWeight);
+                        double WorkedHoursWeight = EvaluateWorkedHoursWeight(MaxWorkedHours, GetWorkedHours(SEARCH_IN_X_ESTIMATIONS, EstimatedBy.Employee, neigbour.ToNode.Employee));
+
+                        // = WAGA WYNIKAJĄCA ZE SREDNIEJ OCENY OTRZYMANEJ W KILKU POPRZEDNICH ESTYMACJACH  = //
+                        double PreviousEstimations = GetPreviousEvaluations(SEARCH_IN_X_ESTIMATIONS, EstimatedBy.Employee, neigbour.ToNode.Employee);
+
 
                         // ========== WYLICZENIE WAGI OCENY DANEGO WSPÓŁPRACOWNIKA  ========== //
                         // Tymczasowo średnia wszystkich powyższych wag
-                        neigbour.EstimationWeight = (EmploymentDateWeight + RolesWeight + EstimationFrequencyWeight + WorkedHoursWeight) / 4;
-                        Console.WriteLine("     Waga oceny {1,24}:     {0}", neigbour.EstimationWeight, neigbour.FromNode.Employee.Name);
+                        neigbour.EstimationWeight = (A*EmploymentDateWeight + B*RolesWeight + C*EstimationFrequencyWeight + D*WorkedHoursWeight + E*PreviousEstimations) / 5;
 
+#if WEIGHTS
+                        Console.WriteLine("     Waga wynikająca z daty zatrudnienia:     {0}", EmploymentDateWeight);
+                        Console.WriteLine("     Waga wynikająca z roli użytkownika:      {0}", RolesWeight);
+                        Console.WriteLine("     Waga wynikająca z częst. oceniania:      {0}", EstimationFrequencyWeight);
+                        Console.WriteLine("     Waga wynikająca z il. przper. czasu:     {0}", WorkedHoursWeight);
+                        Console.WriteLine("     Waga oceny {1,24}:     {0}", neigbour.EstimationWeight, EstimatedBy.Employee.Name);
+#endif
                         n.EstimatedAutority += neigbour.EstimationWeight * neigbour.ValueForCompany;
                     }
                 }
@@ -132,7 +167,33 @@ namespace EstimationOfAuthorities.Estimation
                 // ============== UWZGLĘDNIENIE POPRZEDNICH KILKU OCEN  ============== //
                 // Do wymyślenia
                 n.EstimatedAutority = n.EstimatedAutority;
+
             }
+
+            // ====================== MAKSYMALNA  ESTYMACJA ====================== //
+            double MaxEstimationValue = Nodes.Max(n => n.EstimatedAutority);
+            
+            // ================ GDY PRACOWNIK NIE ZOSTAŁ OCENIONY ================ //
+            // Aktualny pracownik: n
+            foreach (Node n in Nodes) {
+                if (n.EstimatedAutority == 0) n.EstimatedAutority = MaxEstimationValue / 2;
+            }
+
+            // ========================= POMINIĘCIE  CEO ========================= //
+            if (Corporation.CEO != null) {
+                Nodes.Find(n => n.Employee.Name == Corporation.CEO.Name).EstimatedAutority = 0;// MaxEstimationValue * 1.5;
+                //Console.WriteLine(Nodes.Find(n => n.Employee.Name == Corporation.CEO.Name));
+            }
+
+            // ==================== SUMA WSZYSTKICH ESTYMACJI ==================== //
+            double TotalEstimationsValue = Nodes.Sum(n => n.EstimatedAutority);
+
+            // ===================== PRZYDZIAŁ WYNAGRODZENIA ===================== //
+            // Aktualny pracownik: n
+            foreach (Node n in Nodes) {
+                n.Salary = (n.EstimatedAutority / TotalEstimationsValue) * CashToShare;
+            }
+
             // ---------- ALGORYTM ESTYMACJI AUTORYTETÓW ---------- //
 
             Console.WriteLine();
@@ -184,7 +245,7 @@ namespace EstimationOfAuthorities.Estimation
             double weight = 0.0;
 
             weight = emp.Roles.Count > 0 ?
-                (double)emp.Roles.Max(role => role.Priority) / 10 + 0.5 :
+                (double)emp.Roles.Max(role => role.Priority) / 10 + 0.4 :
                 0.4;
 
             //foreach (Role role in emp.Roles) {
@@ -219,7 +280,8 @@ namespace EstimationOfAuthorities.Estimation
         /// <summary>
         /// Zwraca liczbę dokonanych ocen przez pracownika w ostatnich kilku estymacji
         /// </summary>
-        /// <param name="node"></param>
+        /// <param name="employee">Pracownik</param>
+        /// <param name="lastFew">Liczba ostatnich estymacji</param>
         /// <returns></returns>
         private double GetEstimationCount(Employee employee, int lastFew) {
             int estimationsCount = 0;
@@ -248,15 +310,78 @@ namespace EstimationOfAuthorities.Estimation
         // ------------------------------------------------------------------------
 
         /// <summary>
-        /// Znalezienie największej liczby przepracowanych godzin
+        /// Znalezienie największej liczby przepracowanych godzin między współpracownikami w ciągu ostatnich kilku estymacji
         /// </summary>
+        /// <param name="lastFew">Liczba ostatnich estymacji</param>
         /// <returns></returns>
-        private double FindMaxWorkedHours() {
-            return Nodes.Max(node => {
-                if (node.Neighbours.Count > 0)
-                    return node.Neighbours.Max(n => n.WorkedHours);
-                else return 0.0;
-            });
+        private double FindMaxWorkedHours(int lastFew) {
+            //return Nodes.Max(node => {
+            //    if (node.Neighbours.Count > 0)
+            //        return node.Neighbours.Max(n => n.WorkedHours);
+            //    else return 0.0;
+            //});
+
+            double max = 0.0;
+
+            foreach (Node node in Nodes) {
+                foreach (Neighbour n in node.Neighbours) {
+                    double workedHours = 0;// = GetWorkedHours(lastFew, node.Employee);
+                    if (n.ToNode != node) {
+                        workedHours += GetWorkedHours(lastFew, node.Employee, n.ToNode.Employee);
+                        //Console.WriteLine(workedHours);
+                    }
+                    if (max < workedHours) max = workedHours;
+                }
+            }
+
+            return max;
+        }
+
+        /// <summary>
+        /// Zwraca liczbę przepracowanych godzin z danym pracownikiem w ciągu ostatnich kilku estymacji
+        /// </summary>
+        /// <param name="emp"></param>
+        /// <param name="lastFew"></param>
+        /// <returns></returns>
+        private double GetWorkedHours(int lastFew, Employee employee, Employee with = null) {
+            double workedHours = 0;
+            for (int i = Corporation.Evaluations.Count - 1; i > Corporation.Evaluations.Count - 1 - lastFew && i >= 0; i--) {
+                Graph current = Corporation.Evaluations[i];
+                if (current.Nodes.Exists(n => n.Employee.Name == employee.Name)) {
+                    Node temp = current.Nodes.Find(n => n.Employee.Name == employee.Name);
+                    foreach (Neighbour n in temp.Neighbours) {
+                        if (with == null) {
+                            if (n.ToNode != temp) workedHours += n.WorkedHours;
+                        } else {
+                            if (n.ToNode.Employee.Name == with.Name) workedHours += n.WorkedHours;
+                        }
+
+                    }
+                }
+            }
+
+            return workedHours;
+        }
+
+        /// <summary>
+        /// Zwraca średnią ocen otrzymanych w ciągu ostatnich kilku estymacji
+        /// </summary>
+        /// <param name="emp"></param>
+        /// <param name="lastFew"></param>
+        /// <returns></returns>
+        private double GetPreviousEvaluations(int lastFew, Employee employee, Employee with = null)
+        {
+            double evaluations = 0;
+            for (int i = Corporation.Evaluations.Count - 1; i > Corporation.Evaluations.Count - 1 - lastFew && i >= 0; i--)
+            {
+                Graph current = Corporation.Evaluations[i];
+                if (current.Nodes.Exists(n => n.Employee.Name == employee.Name))
+                {
+                    Node temp = current.Nodes.Find(n => n.Employee.Name == employee.Name);
+                    evaluations += temp.EstimatedAutority;
+                }
+            }
+            return evaluations/lastFew;
         }
 
         /// <summary>
@@ -281,6 +406,7 @@ namespace EstimationOfAuthorities.Estimation
             foreach (Node n in Nodes) {
                 Console.WriteLine(n.Employee.Name);
                 Console.WriteLine("  Authority:  " + n.EstimatedAutority);
+                Console.WriteLine("  Salary:     " + n.Salary);
                 foreach (Neighbour ne in n.Neighbours) {
                     if (ne.ToNode.Employee == n.Employee) {
                         Console.WriteLine("   TO: " + ne.ToNode.Employee.Name);

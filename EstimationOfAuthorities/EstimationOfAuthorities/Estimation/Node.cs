@@ -26,6 +26,11 @@ namespace EstimationOfAuthorities.Estimation
         /// Lista sąsiedztwa (lista pracowników, którzy ocenili danego pracownika (whis.Employee) - jak pracownik (this.Employee) został oceniony przez innych pracowników)
         /// </summary>
         public List<Neighbour> Neighbours { get; set; }
+
+        /// <summary>
+        /// Wynagrodzenie pracownika
+        /// </summary>
+        public double Salary { get; set; }
         #endregion
 
         #region Constructors

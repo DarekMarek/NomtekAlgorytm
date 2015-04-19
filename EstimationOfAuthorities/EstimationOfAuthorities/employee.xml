@@ -2,19 +2,19 @@
 <ArrayOfEmployee xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Employee>
     <Name>Krzysztof Choma</Name>
-    <EmploymentDate>2015-04-09T00:00:00</EmploymentDate>
+    <EmploymentDate>2014-05-01T00:00:00</EmploymentDate>
     <Roles>
       <Role>
         <Name>admin</Name>
         <Priority>0</Priority>
       </Role>
       <Role>
-        <Name>ceo</Name>
-        <Priority>6</Priority>
-      </Role>
-      <Role>
         <Name>accountant</Name>
         <Priority>1</Priority>
+      </Role>
+      <Role>
+        <Name>ceo</Name>
+        <Priority>6</Priority>
       </Role>
     </Roles>
   </Employee>
@@ -30,17 +30,17 @@
   </Employee>
   <Employee>
     <Name>Paulina Brzechffa</Name>
-    <EmploymentDate>2014-05-01T00:00:00</EmploymentDate>
+    <EmploymentDate>2014-12-01T00:00:00</EmploymentDate>
     <Roles>
       <Role>
-        <Name>line_manager</Name>
-        <Priority>4</Priority>
+        <Name>internal</Name>
+        <Priority>3</Priority>
       </Role>
     </Roles>
   </Employee>
   <Employee>
     <Name>Magdalena Roksela</Name>
-    <EmploymentDate>2015-04-01T00:00:00</EmploymentDate>
+    <EmploymentDate>2014-05-01T00:00:00</EmploymentDate>
     <Roles>
       <Role>
         <Name>external</Name>
@@ -54,7 +54,7 @@
   </Employee>
   <Employee>
     <Name>Przemysław Kołaczek</Name>
-    <EmploymentDate>2014-05-01T00:00:00</EmploymentDate>
+    <EmploymentDate>2015-01-01T00:00:00</EmploymentDate>
     <Roles>
       <Role>
         <Name>internal</Name>
@@ -68,7 +68,7 @@
   </Employee>
   <Employee>
     <Name>Piotrek Sobierski</Name>
-    <EmploymentDate>2015-04-15T00:00:00</EmploymentDate>
+    <EmploymentDate>2015-02-11T00:00:00</EmploymentDate>
     <Roles>
       <Role>
         <Name>external</Name>
